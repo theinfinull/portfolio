@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap'
 import icon from 'astro-icon'
 
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
-import expressiveCode from 'astro-expressive-code'
+import expressiveCode, { createInlineSvgUrl } from 'astro-expressive-code'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeKatex from 'rehype-katex'
 import rehypePrettyCode from 'rehype-pretty-code'
@@ -19,6 +19,8 @@ import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import tailwindcss from '@tailwindcss/vite'
 
 import cloudflare from '@astrojs/cloudflare';
+
+const lucideCopyIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-icon lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>`
 
 export default defineConfig({
   site: 'https://astro-erudite.vercel.app',
@@ -39,6 +41,9 @@ export default defineConfig({
             },
         },
       },
+      frames: {
+        showCopyToClipboardButton: true,
+      },
       styleOverrides: {
         codeFontSize: '0.75rem',
         borderColor: 'var(--border)',
@@ -46,6 +51,7 @@ export default defineConfig({
         codeBackground:
           'color-mix(in oklab, var(--muted) 25%, transparent)',
         frames: {
+          copyIcon: createInlineSvgUrl(lucideCopyIcon),
           editorActiveTabForeground: 'var(--muted-foreground)',
           editorActiveTabBackground:
             'color-mix(in oklab, var(--muted) 25%, transparent)',
@@ -60,6 +66,8 @@ export default defineConfig({
           terminalTitlebarBackground: 'transparent',
           terminalTitlebarBorderBottomColor: 'transparent',
           terminalTitlebarForeground: 'var(--muted-foreground)',
+          inlineButtonBorder: 'none',
+          inlineButtonBackground: 'green',
         },
         lineNumbers: {
           foreground: 'var(--muted-foreground)',
