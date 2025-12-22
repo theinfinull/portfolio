@@ -1,0 +1,113 @@
+---
+// Astro
+import { Icon } from 'astro-icon/components'
+import { Image } from 'astro:assets'
+
+// Components
+import Link from './Link.astro'
+
+// Utils & Types
+import { cn } from '@/lib/utils'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  experiences: CollectionEntry<'experience'>[]
+}
+
+const { experiences } = Astro.props
+
+const sortedExperiences = experiences.sort((a, b) => {
+  if (a.data.current && !b.data.current) return -1
+  if (!a.data.current && b.data.current) return 1
+
+  const orderA = a.data.order ?? 0
+  const orderB = b.data.order ?? 0
+  return orderB - orderA
+})
+---
+
+<div class="space-y-8">
+  {
+    sortedExperiences.map((exp, index) => {
+      return (
+        <div class="relative">
+          {index < sortedExperiences.length - 1 && (
+            <div
+              class="bg-border absolute top-14 bottom-[-2rem] left-[19px] w-[1px]"
+              aria-hidden="true"
+            />
+          )}
+
+          <div class="flex gap-5">
+            {/* Company Logo */}
+            <Link
+              href={exp.data.companyUrl!}
+              external
+              class="relative block flex-shrink-0"
+            >
+              <div
+                class={cn(
+                  'border-border z-10 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border',
+                  exp.data.current &&
+                    'shadow-primary/20 shadow-lg dark:shadow-none'
+                )}
+              >
+                <Image
+                  src={exp.data.companyLogo!}
+                  alt={exp.data.company}
+                  width={40}
+                  height={40}
+                  class="bg-background dark:bg-border h-full w-full object-contain p-1.5 transition-opacity hover:opacity-80"
+                />
+              </div>
+            </Link>
+
+            <div class="min-w-0 flex-1">
+              <div class="space-y-1">
+                {/* Role Name */}
+                <div class="flex items-start justify-between gap-4">
+                  <h3 class="text-foreground text-lg leading-tight font-semibold">
+                    {exp.data.role}
+                  </h3>
+                  {exp.data.current && (
+                    <span class="inline-flex items-center gap-1 rounded-full border border-green-500/20 bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+                      <span class="h-1.5 w-1.5 rounded-full bg-green-500 dark:bg-green-400" />
+                      Active
+                    </span>
+                  )}
+                </div>
+
+                {/* Company Name */}
+                <p class="text-muted-foreground text-sm">{exp.data.company}</p>
+
+                {/* Period and Location */}
+                <p class="text-muted-foreground text-sm">
+                  {exp.data.period}
+                  <span class="mx-2">·</span>
+                  {exp.data.location}
+                </p>
+              </div>
+
+              {/* Description */}
+              <p class="text-muted-foreground/90 mt-2 text-sm leading-relaxed">
+                {exp.data.key}
+              </p>
+
+              {/* Badges */}
+              {exp.data.badges && exp.data.badges.length > 0 && (
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {exp.data.badges.map((badge) => (
+                    <span class="border-border bg-muted/50 text-muted-foreground inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium">
+                      <Icon name={badge.icon} class="size-3.5" />
+                      {badge.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )
+    })
+  }
+</div>
