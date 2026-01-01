@@ -1,0 +1,143 @@
+---
+
+---
+
+<div
+  id="loading-bar"
+  class="loading-bar-container pointer-events-none fixed top-0 right-0 left-0 z-9999 h-0.5 opacity-0 transition-opacity duration-200 ease-out [&.loading]:opacity-100"
+>
+  <div
+    class="loading-bar bg-accent transition-width h-full w-0 duration-200 [&.completing]:w-full [&.completing]:duration-300 [&.completing]:ease-in"
+  >
+  </div>
+</div>
+
+<style>
+  .loading-bar {
+    box-shadow:
+      0 0 10px var(--accent),
+      0 0 5px var(--accent);
+  }
+</style>
+
+<script>
+  function initLoadingBar() {
+    const loadingBar = document.getElementById('loading-bar')
+    const loadingBarInner = loadingBar?.querySelector(
+      '.loading-bar'
+    ) as HTMLElement
+
+    if (!loadingBar || !loadingBarInner) return
+
+    let progressInterval: ReturnType<typeof setInterval> | null = null
+    let currentProgress = 0
+
+    function resetProgress() {
+      currentProgress = 0
+      loadingBarInner.style.width = '0%'
+    }
+
+    function showLoadingBar() {
+      if (loadingBar) {
+        resetProgress()
+        loadingBar.classList.remove('completing')
+        loadingBar.classList.add('loading')
+
+        // Start progress simulation
+        if (progressInterval) {
+          clearInterval(progressInterval)
+        }
+
+        currentProgress = 10
+        loadingBarInner.style.width = '10%'
+
+        // Simulate progress - gradually increase to 90%
+        progressInterval = setInterval(() => {
+          if (currentProgress < 90) {
+            currentProgress += Math.random() * 15
+            if (currentProgress > 90) currentProgress = 90
+            loadingBarInner.style.width = `${currentProgress}%`
+          }
+        }, 200)
+      }
+    }
+
+    function completeLoadingBar() {
+      if (loadingBar) {
+        // Clear progress interval
+        if (progressInterval) {
+          clearInterval(progressInterval)
+          progressInterval = null
+        }
+
+        // Complete to 100%
+        loadingBarInner.style.width = '100%'
+
+        loadingBar.classList.remove('loading')
+        loadingBar.classList.add('completing')
+
+        // Hide after animation completes
+        setTimeout(() => {
+          if (loadingBar) {
+            loadingBar.classList.remove('completing')
+            resetProgress()
+          }
+        }, 300)
+      }
+    }
+
+    // Show loading bar immediately on link clicks (before Astro events)
+    function handleLinkClick(e: MouseEvent) {
+      const target = e.target as HTMLElement
+      const link = target.closest('a[href]') as HTMLAnchorElement
+
+      if (link && link.href) {
+        try {
+          const url = new URL(link.href)
+          const currentUrl = new URL(window.location.href)
+
+          // Only show for same-origin navigation
+          if (
+            url.origin === currentUrl.origin &&
+            url.pathname !== currentUrl.pathname
+          ) {
+            showLoadingBar()
+          }
+        } catch {
+          // Invalid URL, ignore
+        }
+      }
+    }
+
+    // Remove existing listeners to avoid duplicates
+    document.removeEventListener('click', handleLinkClick, true)
+    document.removeEventListener('astro:before-preparation', showLoadingBar)
+    document.removeEventListener('astro:before-swap', showLoadingBar)
+    document.removeEventListener('astro:page-load', completeLoadingBar)
+    document.removeEventListener('astro:after-swap', completeLoadingBar)
+
+    // Add event listeners
+    document.addEventListener('click', handleLinkClick, true) // Use capture phase to catch early
+    document.addEventListener('astro:before-preparation', showLoadingBar)
+    document.addEventListener('astro:before-swap', showLoadingBar)
+    document.addEventListener('astro:page-load', completeLoadingBar)
+    document.addEventListener('astro:after-swap', completeLoadingBar)
+
+    // Show loading bar on initial page load if assets are still loading
+    if (document.readyState === 'loading') {
+      showLoadingBar()
+      const handleLoad = () => {
+        completeLoadingBar()
+        window.removeEventListener('load', handleLoad)
+      }
+      window.addEventListener('load', handleLoad)
+    }
+  }
+
+  // Initialize immediately
+  initLoadingBar()
+
+  // Re-initialize after page swaps to ensure listeners are attached
+  document.addEventListener('astro:page-load', initLoadingBar)
+  document.addEventListener('astro:after-swap', initLoadingBar)
+</script>
