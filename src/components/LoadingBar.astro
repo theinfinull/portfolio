@@ -1,19 +1,20 @@
 ---
-
+// LoadingBar component for showing page navigation progress
 ---
 
 <div
   id="loading-bar"
-  class="loading-bar-container pointer-events-none fixed top-0 right-0 left-0 z-9999 h-0.5 opacity-0 transition-opacity duration-200 ease-out [&.loading]:opacity-100"
+  class="pointer-events-none fixed top-0 right-0 left-0 z-9999 h-0.5 opacity-0 transition-opacity duration-200 ease-out [&.loading]:opacity-100"
 >
   <div
-    class="loading-bar bg-accent transition-width h-full w-0 duration-200 [&.completing]:w-full [&.completing]:duration-300 [&.completing]:ease-in"
+    id="loading-bar-inner"
+    class="bg-accent transition-width h-full w-0 duration-200 [&.completing]:w-full [&.completing]:duration-300 [&.completing]:ease-in"
   >
   </div>
 </div>
 
 <style>
-  .loading-bar {
+  #loading-bar-inner {
     box-shadow:
       0 0 10px var(--accent),
       0 0 5px var(--accent);
@@ -21,109 +22,121 @@
 </style>
 
 <script>
-  function initLoadingBar() {
-    const loadingBar = document.getElementById('loading-bar')
-    const loadingBarInner = loadingBar?.querySelector(
-      '.loading-bar'
-    ) as HTMLElement
+  // Loading Bar Configuration Constants
+  const PROGRESS_INTERVAL_MS = 200
+  const COMPLETION_DELAY_MS = 300
+  const INITIAL_PROGRESS = 10
+  const MAX_PROGRESS = 90
+  const PROGRESS_INCREMENT = 15
+  const EXCLUDED_PATHS = ['/rss.xml']
 
+  // Logic
+  let progressInterval: ReturnType<typeof setInterval> | null = null
+  let currentProgress = 0
+
+  function getElements() {
+    const loadingBar = document.getElementById('loading-bar')
+    const loadingBarInner = document.getElementById('loading-bar-inner')
+    return { loadingBar, loadingBarInner }
+  }
+
+  function resetProgress(loadingBarInner: HTMLElement) {
+    currentProgress = 0
+    loadingBarInner.style.width = '0%'
+  }
+
+  function clearProgressInterval() {
+    if (progressInterval) {
+      clearInterval(progressInterval)
+      progressInterval = null
+    }
+  }
+
+  function simulateProgress(loadingBarInner: HTMLElement) {
+    clearProgressInterval()
+
+    currentProgress = INITIAL_PROGRESS
+    loadingBarInner.style.width = `${INITIAL_PROGRESS}%`
+
+    progressInterval = setInterval(() => {
+      if (currentProgress < MAX_PROGRESS) {
+        currentProgress += Math.random() * PROGRESS_INCREMENT
+        if (currentProgress > MAX_PROGRESS) {
+          currentProgress = MAX_PROGRESS
+        }
+        loadingBarInner.style.width = `${currentProgress}%`
+      }
+    }, PROGRESS_INTERVAL_MS)
+  }
+
+  function showLoadingBar() {
+    const { loadingBar, loadingBarInner } = getElements()
     if (!loadingBar || !loadingBarInner) return
 
-    let progressInterval: ReturnType<typeof setInterval> | null = null
-    let currentProgress = 0
+    resetProgress(loadingBarInner)
+    loadingBar.classList.remove('completing')
+    loadingBar.classList.add('loading')
+    simulateProgress(loadingBarInner)
+  }
 
-    function resetProgress() {
-      currentProgress = 0
-      loadingBarInner.style.width = '0%'
-    }
+  function completeLoadingBar() {
+    const { loadingBar, loadingBarInner } = getElements()
+    if (!loadingBar || !loadingBarInner) return
 
-    function showLoadingBar() {
-      if (loadingBar) {
-        resetProgress()
-        loadingBar.classList.remove('completing')
-        loadingBar.classList.add('loading')
+    clearProgressInterval()
+    loadingBarInner.style.width = '100%'
+    loadingBar.classList.remove('loading')
+    loadingBar.classList.add('completing')
 
-        // Start progress simulation
-        if (progressInterval) {
-          clearInterval(progressInterval)
-        }
-
-        currentProgress = 10
-        loadingBarInner.style.width = '10%'
-
-        // Simulate progress - gradually increase to 90%
-        progressInterval = setInterval(() => {
-          if (currentProgress < 90) {
-            currentProgress += Math.random() * 15
-            if (currentProgress > 90) currentProgress = 90
-            loadingBarInner.style.width = `${currentProgress}%`
-          }
-        }, 200)
+    setTimeout(() => {
+      const { loadingBar: bar } = getElements()
+      if (bar) {
+        bar.classList.remove('completing')
+        resetProgress(loadingBarInner)
       }
-    }
+    }, COMPLETION_DELAY_MS)
+  }
 
-    function completeLoadingBar() {
-      if (loadingBar) {
-        // Clear progress interval
-        if (progressInterval) {
-          clearInterval(progressInterval)
-          progressInterval = null
-        }
+  function handleLinkClick(e: MouseEvent) {
+    const target = e.target as HTMLElement
+    const link = target.closest('a[href]') as HTMLAnchorElement
 
-        // Complete to 100%
-        loadingBarInner.style.width = '100%'
+    if (!link?.href) return
 
-        loadingBar.classList.remove('loading')
-        loadingBar.classList.add('completing')
+    try {
+      const url = new URL(link.href)
+      const currentUrl = new URL(window.location.href)
 
-        // Hide after animation completes
-        setTimeout(() => {
-          if (loadingBar) {
-            loadingBar.classList.remove('completing')
-            resetProgress()
-          }
-        }, 300)
+      if (EXCLUDED_PATHS.includes(url.pathname)) return
+
+      if (
+        url.origin === currentUrl.origin &&
+        url.pathname !== currentUrl.pathname
+      ) {
+        showLoadingBar()
       }
+    } catch {
+      // Invalid URL, ignore
     }
+  }
 
-    // Show loading bar immediately on link clicks (before Astro events)
-    function handleLinkClick(e: MouseEvent) {
-      const target = e.target as HTMLElement
-      const link = target.closest('a[href]') as HTMLAnchorElement
-
-      if (link && link.href) {
-        try {
-          const url = new URL(link.href)
-          const currentUrl = new URL(window.location.href)
-
-          // Only show for same-origin navigation
-          if (
-            url.origin === currentUrl.origin &&
-            url.pathname !== currentUrl.pathname
-          ) {
-            showLoadingBar()
-          }
-        } catch {
-          // Invalid URL, ignore
-        }
-      }
-    }
-
-    // Remove existing listeners to avoid duplicates
+  function setupEventListeners() {
+    // remove existing listeners to avoid duplicates
     document.removeEventListener('click', handleLinkClick, true)
     document.removeEventListener('astro:before-preparation', showLoadingBar)
     document.removeEventListener('astro:before-swap', showLoadingBar)
     document.removeEventListener('astro:page-load', completeLoadingBar)
     document.removeEventListener('astro:after-swap', completeLoadingBar)
 
-    // Add event listeners
-    document.addEventListener('click', handleLinkClick, true) // Use capture phase to catch early
+    // add event listeners
+    document.addEventListener('click', handleLinkClick, true) // capture phase for early detection
     document.addEventListener('astro:before-preparation', showLoadingBar)
     document.addEventListener('astro:before-swap', showLoadingBar)
     document.addEventListener('astro:page-load', completeLoadingBar)
     document.addEventListener('astro:after-swap', completeLoadingBar)
+  }
 
-    // Show loading bar on initial page load if assets are still loading
+  function handleInitialLoad() {
     if (document.readyState === 'loading') {
       showLoadingBar()
       const handleLoad = () => {
@@ -134,10 +147,13 @@
     }
   }
 
-  // Initialize immediately
-  initLoadingBar()
+  function initLoadingBar() {
+    setupEventListeners()
+    handleInitialLoad()
+  }
 
-  // Re-initialize after page swaps to ensure listeners are attached
+  // initialize loading bar and event listeners
+  initLoadingBar()
   document.addEventListener('astro:page-load', initLoadingBar)
   document.addEventListener('astro:after-swap', initLoadingBar)
 </script>
