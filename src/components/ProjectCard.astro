@@ -1,6 +1,6 @@
 ---
 import AnimatedButton from '@/components/AnimatedButton.astro'
-import { ICON_MAP, getIconColor, getIconName } from '@/consts'
+import { ICON_MAP, SITE, getIconColor, getIconName } from '@/consts'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
@@ -15,19 +15,19 @@ const { project } = Astro.props
 <div
   class="flex flex-col overflow-hidden rounded-xl border transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg sm:flex-row sm:items-stretch"
 >
-  {
-    project.data.image && (
-      <div class="border-border w-full overflow-hidden border-b sm:max-w-3xs sm:shrink-0 sm:self-stretch sm:border-r sm:border-b-0">
-        <Image
-          src={project.data.image}
-          alt={project.data.name}
-          width={1200}
-          height={630}
-          class="h-full w-full object-cover"
-        />
-      </div>
-    )
-  }
+  <div
+    class="border-border w-full overflow-hidden border-b sm:max-w-3xs sm:shrink-0 sm:self-stretch sm:border-r sm:border-b-0"
+  >
+    {/* prettier-ignore */}
+    {/* @ts-expect-error - Astro Image accepts ImageMetadata | string */}
+    <Image
+      src={project.data.image ?? SITE.defaultProjectBanner}
+      alt={project.data.name}
+      width={1200}
+      height={630}
+      class="h-full w-full object-cover"
+    />
+  </div>
   <div class="flex grow flex-col p-4">
     <div class="flex grow flex-col gap-4">
       <div>

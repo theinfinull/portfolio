@@ -1,7 +1,7 @@
 ---
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { ICON_MAP, getIconColor, getIconName } from '@/consts'
+import { ICON_MAP, SITE, getIconColor, getIconName } from '@/consts'
 import {
   getCombinedReadingTime,
   getSubpostCount,
@@ -12,7 +12,6 @@ import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
 import Link from './Link.astro'
-import defaultBanner from '/public/static/common/default-banner-1200x630.png'
 import logo from '/public/static/common/logo.png'
 
 interface Props {
@@ -35,8 +34,10 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
     <div
       class="border-border w-full overflow-hidden border-b sm:max-w-3xs sm:shrink-0 sm:self-stretch sm:border-r sm:border-b-0"
     >
+      {/* prettier-ignore */}
+      {/* @ts-expect-error - Astro Image accepts ImageMetadata | string */}
       <Image
-        src={entry.data.image || defaultBanner}
+        src={entry.data.image ?? SITE.defaultPostBanner}
         alt={entry.data.title}
         width={1200}
         height={630}

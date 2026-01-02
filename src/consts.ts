@@ -9,6 +9,9 @@ export const SITE: Site = {
   featuredPostCount: 2,
   featuredProjectCount: 3,
   postsPerPage: 3,
+  projectsPerPage: 3,
+  defaultPostBanner: '/static/common/default-post-banner-1200x630.jpg',
+  defaultProjectBanner: '/static/common/default-project-banner-1200x630.jpg'
 }
 
 export const NAV_LINKS: SocialLink[] = [

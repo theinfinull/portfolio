@@ -4,11 +4,7 @@ import type { APIContext } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 import { getAllPosts } from '@/lib/data-utils'
 
-// RSS Configuration Constants
-const DEFAULT_BANNER_PATH = '/static/common/default-banner-1200x630.jpg'
 const DEFAULT_MIME_TYPE = 'image/jpeg'
-
-// Helpers
 const MIME_TYPES: Record<string, string> = {
   png: 'image/png',
   gif: 'image/gif',
@@ -22,14 +18,14 @@ function getImageMimeType(imageUrl: string): string {
   return MIME_TYPES[extension] || DEFAULT_MIME_TYPE
 }
 
-function createImageUrl(imageSrc: string | undefined, siteUrl: string, defaultBanner: URL): string {
+function createImageUrl(imageSrc: string | undefined, siteUrl: string): string {
   return imageSrc
     ? new URL(imageSrc, siteUrl).toString()
-    : defaultBanner.toString()
+    : new URL(SITE.defaultPostBanner, siteUrl).toString()
 }
 
-function createRssItem(post: CollectionEntry<'blog'>, siteUrl: string, defaultBanner: URL) {
-  const imageUrl = createImageUrl(post.data.image?.src, siteUrl, defaultBanner)
+function createRssItem(post: CollectionEntry<'blog'>, siteUrl: string) {
+  const imageUrl = createImageUrl(post.data.image?.src, siteUrl)
   const imageType = getImageMimeType(imageUrl)
 
   return {
@@ -47,13 +43,12 @@ export async function GET(context: APIContext) {
   try {
     const posts = await getAllPosts()
     const siteUrl = context.url.origin
-    const defaultBanner = new URL(DEFAULT_BANNER_PATH, siteUrl)
 
     return rss({
       title: SITE.title,
       description: SITE.description,
       site: siteUrl,
-      items: posts.map((post) => createRssItem(post, siteUrl, defaultBanner)),
+      items: posts.map((post) => createRssItem(post, siteUrl)),
     })
   } catch (error) {
     console.error('Error generating RSS feed:', error)

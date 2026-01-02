@@ -6,6 +6,9 @@ export type Site = {
   featuredPostCount: number
   featuredProjectCount: number
   postsPerPage: number
+  projectsPerPage: number
+  defaultPostBanner: string
+  defaultProjectBanner: string
 }
 
 export type SocialLink = {

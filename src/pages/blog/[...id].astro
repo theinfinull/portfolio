@@ -8,7 +8,7 @@ import TOCHeader from '@/components/TOCHeader.astro'
 import TOCSidebar from '@/components/TOCSidebar.astro'
 import { badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ICON_MAP, getIconColor, getIconName } from '@/consts'
+import { ICON_MAP, SITE, getIconColor, getIconName } from '@/consts'
 import Layout from '@/layouts/Layout.astro'
 import {
   getAdjacentPosts,
@@ -26,7 +26,6 @@ import { formatDate } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 import { render } from 'astro:content'
-import defaultBanner from '/public/static/common/default-banner-1200x630.png'
 import logo from '/public/static/common/logo.png'
 
 export async function getStaticPaths() {
@@ -108,8 +107,10 @@ const tocSections = await getTOCSections(currentPostId)
       />
     </div>
 
+    {/* prettier-ignore */}
+    {/* @ts-expect-error - Astro Image accepts ImageMetadata | string */}
     <Image
-      src={post.data.image || defaultBanner}
+      src={post.data.image ?? SITE.defaultPostBanner}
       alt={post.data.title}
       width={1200}
       height={630}
