@@ -57,6 +57,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
   {
     href: 'https://instagram.com/sedhu_madhav_',
     label: 'Instagram',
+  },
+  {
+    href: '/rss.xml',
+    label: 'RSS',
   }
 ]
 
@@ -68,6 +72,7 @@ export const ICON_MAP: IconMap = {
   Twitter: 'simple-icons:x',
   Instagram: 'lucide:instagram',
   Email: 'lucide:send',
+  RSS: 'lucide:rss',
 
   // tech
   typescript: { icon: 'simple-icons:typescript', color: '#3178C6' },
