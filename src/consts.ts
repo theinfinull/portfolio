@@ -4,7 +4,6 @@ export const SITE: Site = {
   title: 'infinull',
   description:
     'Portfolio and Blog of Sedhu Madhav (aka infinull)',
-  href: 'https://portfolio.theinfinull.workers.dev',
   author: 'infinull',
   locale: 'en-US',
   featuredPostCount: 2,

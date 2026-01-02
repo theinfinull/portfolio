@@ -12,12 +12,14 @@ const {
   description = SITE.description,
   noindex = false,
 } = Astro.props
-const image = new URL('/static/1200x630.png', Astro.site)
+const siteUrl = Astro.url.origin
+const image = new URL('/static/1200x630.png', siteUrl)
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl)
 ---
 
 <title>{`${title} | ${SITE.title}`}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={SITE.href} />
+<link rel="canonical" href={canonicalUrl} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:title" content={title} />
