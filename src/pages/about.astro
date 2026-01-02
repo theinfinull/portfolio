@@ -2,51 +2,20 @@
 // Components
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PageHead from '@/components/PageHead.astro'
-import { buttonVariants } from '@/components/ui/button'
 
 // Layouts
 import Layout from '@/layouts/Layout.astro'
 
 // Utils & Data
-import { getAllExperiences } from '@/lib/data-utils'
-import { cn } from '@/lib/utils'
-import type { SocialLink } from '@/types'
 import { Image } from 'astro:assets'
 import infinullImage from '/public/static/common/infinull-paperframe.png'
 import profileImage from '/public/static/common/munnar-paperframe2.png'
 
 // Data
-const experiences = await getAllExperiences()
 const age = new Date().getFullYear() - 2002
 
 // Constants
-const cvPath = '/static/cv-common.pdf'
 const zohoUrl = 'https://www.zoho.com'
-const email = 'theinfinull@gmail.com'
-const buttonOutlineClass = cn(
-  buttonVariants({ variant: 'outline', size: 'default' }),
-  'flex items-center gap-2 rounded-none border-accent border-dashed text-accent hover:bg-accent/10 hover:text-accent'
-)
-
-// Social links for the contact section
-const contactSocialLinks: SocialLink[] = [
-  {
-    href: 'https://github.com/theinfinull',
-    label: 'GitHub',
-  },
-  {
-    href: 'https://twitter.com/enscry',
-    label: 'Twitter',
-  },
-  {
-    href: 'https://www.linkedin.com/in/sedhumadhav/',
-    label: 'LinkedIn',
-  },
-  {
-    href: `mailto:${email}`,
-    label: 'Email',
-  },
-]
 ---
 
 <!-- OUTLINE (basically it should be a ME page)
