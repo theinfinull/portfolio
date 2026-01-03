@@ -1,0 +1,35 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+interface Props {
+  src?: ImageMetadata | string
+  defaultSrc?: ImageMetadata | string
+  alt: string
+  width?: number
+  height?: number
+  class?: string
+}
+
+const {
+  src,
+  defaultSrc,
+  alt,
+  width = 1200,
+  height = 630,
+  class: className,
+} = Astro.props
+const imageSrc = src ?? defaultSrc
+---
+
+{
+  !imageSrc ? null : (
+    <Image
+      src={imageSrc as ImageMetadata & string}
+      alt={alt}
+      width={width}
+      height={height}
+      class={className}
+    />
+  )
+}

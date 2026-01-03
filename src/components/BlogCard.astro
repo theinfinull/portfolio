@@ -1,4 +1,5 @@
 ---
+import BannerImage from '@/components/BannerImage.astro'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ICON_MAP, SITE, getIconColor, getIconName } from '@/consts'
@@ -22,7 +23,6 @@ const { entry } = Astro.props
 const formattedDate = formatDate(entry.data.date)
 const readTime = await getCombinedReadingTime(entry.id)
 const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
-const banner = entry.data.image ? entry.data.image : SITE.defaultPostBanner
 ---
 
 <div
@@ -35,8 +35,9 @@ const banner = entry.data.image ? entry.data.image : SITE.defaultPostBanner
     <div
       class="border-border w-full overflow-hidden border-b sm:max-w-3xs sm:shrink-0 sm:self-stretch sm:border-r sm:border-b-0"
     >
-      <Image
-        src={banner.toString()}
+      <BannerImage
+        src={entry.data.image}
+        defaultSrc={SITE.defaultPostBanner}
         alt={entry.data.title}
         width={1200}
         height={630}

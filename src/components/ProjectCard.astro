@@ -1,15 +1,15 @@
 ---
 import AnimatedButton from '@/components/AnimatedButton.astro'
+import BannerImage from '@/components/BannerImage.astro'
 import { ICON_MAP, SITE, getIconColor, getIconName } from '@/consts'
 import { Icon } from 'astro-icon/components'
-import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
-  project: CollectionEntry<'projects'>
+  entry: CollectionEntry<'projects'>
 }
 
-const { project } = Astro.props
+const { entry } = Astro.props
 ---
 
 <div
@@ -18,11 +18,10 @@ const { project } = Astro.props
   <div
     class="border-border w-full overflow-hidden border-b sm:max-w-3xs sm:shrink-0 sm:self-stretch sm:border-r sm:border-b-0"
   >
-    {/* prettier-ignore */}
-    {/* @ts-expect-error - Astro Image accepts ImageMetadata | string */}
-    <Image
-      src={project.data.image ?? SITE.defaultProjectBanner}
-      alt={project.data.name}
+    <BannerImage
+      src={entry.data.image}
+      defaultSrc={SITE.defaultProjectBanner}
+      alt={entry.data.name}
       width={1200}
       height={630}
       class="h-full w-full object-cover"
@@ -32,15 +31,15 @@ const { project } = Astro.props
     <div class="flex grow flex-col gap-4">
       <div>
         <h3 class="mb-1 text-xl font-bold">
-          {project.data.name}
+          {entry.data.name}
         </h3>
         <p class="text-muted-foreground mb-2 text-sm">
-          {project.data.description}
+          {entry.data.description}
         </p>
         {
-          project.data.tags && (
+          entry.data.tags && (
             <div class="flex flex-wrap gap-2">
-              {project.data.tags.map((tag: string) => {
+              {entry.data.tags.map((tag: string) => {
                 const iconEntry = ICON_MAP[tag as keyof typeof ICON_MAP]
                 const iconName = getIconName(iconEntry)
                 const iconColor = getIconColor(iconEntry)
@@ -61,13 +60,13 @@ const { project } = Astro.props
       </div>
     </div>
     {
-      (project.data.sourceCodeLink ||
-        project.data.siteLink ||
-        project.data.relatedBlogsLink) && (
+      (entry.data.sourceCodeLink ||
+        entry.data.siteLink ||
+        entry.data.relatedBlogsLink) && (
         <div class="mt-4 flex flex-wrap gap-2 border-t pt-4">
-          {project.data.sourceCodeLink && (
+          {entry.data.sourceCodeLink && (
             <AnimatedButton
-              href={project.data.sourceCodeLink}
+              href={entry.data.sourceCodeLink}
               external
               variant="outline"
               size="sm"
@@ -78,9 +77,9 @@ const { project } = Astro.props
               Source Code
             </AnimatedButton>
           )}
-          {project.data.relatedBlogsLink && (
+          {entry.data.relatedBlogsLink && (
             <AnimatedButton
-              href={project.data.relatedBlogsLink}
+              href={entry.data.relatedBlogsLink}
               variant="outline"
               size="sm"
               class="bg-accent hover:bg-accent/80 hover:text-background text-background dark:hover:bg-accent/80 w-full flex-1 grow justify-center"
@@ -91,9 +90,9 @@ const { project } = Astro.props
               Related Blogs
             </AnimatedButton>
           )}
-          {project.data.siteLink && (
+          {entry.data.siteLink && (
             <AnimatedButton
-              href={project.data.siteLink}
+              href={entry.data.siteLink}
               external
               variant="default"
               size="sm"
