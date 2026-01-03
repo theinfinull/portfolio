@@ -43,6 +43,6 @@ export function getSiteUrl(context: APIContext): URL {
     return new URL(context.url.origin)
   }
 
-  // for production, using the {site} from astro.config.ts (and fallback to the 'https://portfolio.infinull.workers.dev')
-  return new URL(context.site || 'https://portfolio.infinull.workers.dev')
+  // for production, using the {site} from astro.config.ts (and fallback to the 'https://portfolio.theinfinull.workers.dev')
+  return new URL(context.site || 'https://portfolio.theinfinull.workers.dev')
 }
