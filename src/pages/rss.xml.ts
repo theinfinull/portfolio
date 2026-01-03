@@ -3,6 +3,7 @@ import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 import { getAllPosts } from '@/lib/data-utils'
+import { getSiteUrl } from '@/lib/utils'
 
 const DEFAULT_MIME_TYPE = 'image/jpeg'
 const MIME_TYPES: Record<string, string> = {
@@ -38,17 +39,6 @@ function createRssItem(post: CollectionEntry<'blog'>, siteUrl: string) {
   }
 }
 
-function getSiteUrl(context: APIContext): string {
-  // for production, using the environment variable
-  const productionUrl = import.meta.env.PUBLIC_SITE_URL
-  if (productionUrl) {
-    return productionUrl
-  }
-  
-  // for dev, using the context URL
-  return context.url.origin
-}
-
 // Main
 export async function GET(context: APIContext) {
   try {
@@ -59,7 +49,7 @@ export async function GET(context: APIContext) {
       title: SITE.title,
       description: SITE.description,
       site: siteUrl,
-      items: posts.map((post) => createRssItem(post, siteUrl)),
+      items: posts.map((post) => createRssItem(post, siteUrl.toString())),
     })
   } catch (error) {
     console.error('Error generating RSS feed:', error)

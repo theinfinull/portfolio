@@ -1,3 +1,4 @@
+import type { APIContext } from 'astro'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -34,4 +35,14 @@ export function getHeadingMargin(depth: number): string {
     6: 'ml-16',
   }
   return margins[depth] || ''
+}
+
+export function getSiteUrl(context: APIContext): URL {
+  // for dev, use the context.origin.url
+  if (import.meta.env.DEV) {
+    return new URL(context.url.origin)
+  }
+
+  // for production, using the {site} from astro.config.ts (and fallback to the 'https://portfolio.infinull.workers.dev')
+  return new URL(context.site || 'https://portfolio.infinull.workers.dev')
 }

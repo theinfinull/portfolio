@@ -22,6 +22,7 @@ const { entry } = Astro.props
 const formattedDate = formatDate(entry.data.date)
 const readTime = await getCombinedReadingTime(entry.id)
 const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
+const banner = entry.data.image ? entry.data.image : SITE.defaultPostBanner
 ---
 
 <div
@@ -34,10 +35,8 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
     <div
       class="border-border w-full overflow-hidden border-b sm:max-w-3xs sm:shrink-0 sm:self-stretch sm:border-r sm:border-b-0"
     >
-      {/* prettier-ignore */}
-      {/* @ts-expect-error - Astro Image accepts ImageMetadata | string */}
       <Image
-        src={entry.data.image ?? SITE.defaultPostBanner}
+        src={banner.toString()}
         alt={entry.data.title}
         width={1200}
         height={630}
