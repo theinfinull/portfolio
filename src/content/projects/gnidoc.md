@@ -4,7 +4,7 @@ description: 'Designed for hosting Reverse Coding contest for inter-colllege Sym
 featured: true
 order: 3
 tags: ['vue', 'node', 'vercel']
-image: '/public/static/project/gnidoc-banner.png'
+image: '/public/static/project/gnidoc-banner-1200x900.jpg'
 sourceCodeLink: 'https://github.com/theinfinull/gnidoc25'
 siteLink: 'https://gnidoc.vercel.app'
 startDate: '2024-10-03'
