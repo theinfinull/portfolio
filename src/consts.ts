@@ -78,7 +78,8 @@ export const ICON_MAP: IconMap = {
 
   // tech
   typescript: { icon: 'simple-icons:typescript', color: '#3178C6' },
-  node: { icon: 'simple-icons:nodedotjs', color: '#5FA04E' },
+  nodejs: { icon: 'simple-icons:nodedotjs', color: '#5FA04E' },
+  npm: { icon: 'simple-icons:npm', color: '#CB3837' },
   javascript: { icon: 'simple-icons:javascript', color: '#F7DF1E' },
   html: { icon: 'simple-icons:html5', color: '#E34F26' },
   css: { icon: 'simple-icons:css3', color: '#1572B6' },
@@ -102,6 +103,7 @@ export const ICON_MAP: IconMap = {
   vercel: { icon: 'simple-icons:vercel', color: '#888888' },
   java : { icon: 'lucide:coffee', color: '#F8981D' },
   maven: { icon: 'simple-icons:apachemaven', color: '#C71A36' },
+  'vscode extension api': { icon: 'lucide:code', color: '#007ACC' },
 }
 
 // Helper functions to extract icon name and color from ICON_MAP entry

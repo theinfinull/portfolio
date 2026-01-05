@@ -1,5 +1,4 @@
 ---
-import BannerImage from '@/components/BannerImage.astro'
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PostHead from '@/components/PostHead.astro'
 import PostNavigation from '@/components/PostNavigation.astro'
@@ -56,7 +55,6 @@ const combinedReadingTime =
     : null
 
 const tocSections = await getTOCSections(currentPostId)
-const isRssReader = Astro.url.searchParams.has('rss')
 ---
 
 <Layout>
@@ -109,9 +107,10 @@ const isRssReader = Astro.url.searchParams.has('rss')
       />
     </div>
 
-    <BannerImage
-      src={post.data.image}
-      defaultSrc={SITE.defaultPostBanner}
+    {/* prettier-ignore */}
+    {/* @ts-expect-error - Astro Image accepts ImageMetadata | string */}
+    <Image
+      src={post.data.image ?? SITE.defaultPostBanner}
       alt={post.data.title}
       width={1200}
       height={630}
@@ -199,6 +198,13 @@ const isRssReader = Astro.url.searchParams.has('rss')
           }
         </div>
       </div>
+
+      <!-- Hidden the post navigation buttons as they are available in the bottom of the page -->
+      <!-- <PostNavigation
+        newerPost={navigation.newer}
+        olderPost={navigation.older}
+        parentPost={isCurrentSubpost ? navigation.parent : undefined}
+      /> -->
     </section>
 
     {

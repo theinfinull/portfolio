@@ -27,7 +27,7 @@ const years = Object.keys(projectsByYear).sort((a, b) => {
             <ul class="flex flex-col gap-4">
               {projectsByYear[year].map((project) => (
                 <li>
-                  <ProjectCard entry={project} />
+                  <ProjectCard project={project} />
                 </li>
               ))}
             </ul>
