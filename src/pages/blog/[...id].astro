@@ -56,6 +56,7 @@ const combinedReadingTime =
     : null
 
 const tocSections = await getTOCSections(currentPostId)
+const isRssReader = Astro.url.searchParams.has('rss')
 ---
 
 <Layout>
