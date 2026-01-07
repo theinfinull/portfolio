@@ -6,7 +6,7 @@ import SubpostsHeader from '@/components/SubpostsHeader.astro'
 import SubpostsSidebar from '@/components/SubpostsSidebar.astro'
 import TOCHeader from '@/components/TOCHeader.astro'
 import TOCSidebar from '@/components/TOCSidebar.astro'
-import { badgeVariants } from '@/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ICON_MAP, SITE, getIconColor, getIconName } from '@/consts'
 import Layout from '@/layouts/Layout.astro'
@@ -26,7 +26,6 @@ import { formatDate } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 import { render } from 'astro:content'
-import logo from '/public/static/common/logo.png'
 
 export async function getStaticPaths() {
   const posts = await getAllPostsAndSubposts()
@@ -117,60 +116,23 @@ const tocSections = await getTOCSections(currentPostId)
       class="col-span-full mx-auto w-full max-w-5xl object-cover"
     />
 
-    <section class="col-start-2 flex flex-col gap-y-6 text-center">
+    <section class="col-start-2 flex flex-col gap-y-6">
       <div class="flex flex-col">
         <h1
-          class="mb-2 scroll-mt-31 text-3xl leading-tight font-medium sm:text-4xl"
+          class="mb-2 scroll-mt-31 text-4xl leading-tight font-black sm:text-5xl"
           id="post-title"
         >
           {post.data.title}
         </h1>
 
-        <div
-          class="text-muted-foreground divide-border mb-4 flex flex-col items-center justify-center divide-y text-xs sm:flex-row sm:flex-wrap sm:divide-x sm:divide-y-0 sm:text-sm"
-        >
-          <div
-            class="flex w-full items-center justify-center gap-x-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0"
-          >
-            <div class="flex items-center gap-x-1.5">
-              <Image src={logo} alt="infinull" class="size-5 rounded-full" />
-              <span class="text-foreground">infinull</span>
-            </div>
-          </div>
+        <p class="text-muted-foreground/80 mb-4 text-xl">
+          {post.data.description}
+        </p>
 
-          <div
-            class="flex w-full items-center justify-center gap-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0"
-          >
-            <span>{formatDate(post.data.date)}</span>
-          </div>
-
-          <div
-            class="flex w-full items-center justify-center gap-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0"
-          >
-            <span>
-              {postReadingTime}
-              {
-                combinedReadingTime &&
-                  combinedReadingTime !== postReadingTime && (
-                    <span class="text-muted-foreground">
-                      {' '}
-                      ({combinedReadingTime} total)
-                    </span>
-                  )
-              }
-            </span>
-          </div>
-
-          {
-            subpostCount > 0 && (
-              <div class="flex w-full items-center justify-center gap-1 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0">
-                <Icon name="lucide:file-text" class="size-3" />
-                {subpostCount} subpost{subpostCount === 1 ? '' : 's'}
-              </div>
-            )
-          }
-        </div>
-        <div class="flex flex-wrap justify-center gap-2">
+        <p class="text-muted-foreground/80 mb-6 text-sm">
+          <span>{formatDate(post.data.date)}</span> • {postReadingTime}
+        </p>
+        <div class="flex flex-wrap justify-start gap-2">
           {
             post.data.tags &&
               post.data.tags.length > 0 &&
@@ -179,25 +141,26 @@ const tocSections = await getTOCSections(currentPostId)
                 const iconName = getIconName(iconEntry) || 'lucide:hash'
                 const iconColor = getIconColor(iconEntry)
                 return (
-                  <a
-                    href={`/tags/${tag}`}
-                    class={badgeVariants({
-                      variant: 'muted',
-                      class: 'bg-muted/50',
-                    })}
-                  >
-                    <Icon
-                      name={iconName}
-                      class="size-3"
-                      style={iconColor ? `color: ${iconColor}` : undefined}
-                    />
-                    {tag}
+                  <a href={`/tags/${tag}`}>
+                    <Badge
+                      variant="muted"
+                      className="flex bg-muted/30 border border-border items-center gap-x-1 hover:bg-muted/70 transition-all duration-100 ease-in-out"
+                    >
+                      <Icon
+                        name={iconName}
+                        class="size-3"
+                        style={iconColor ? `color: ${iconColor}` : undefined}
+                      />
+                      {tag}
+                    </Badge>
                   </a>
                 )
               })
           }
         </div>
       </div>
+
+      <hr class="border-border mb-8" />
 
       <!-- Hidden the post navigation buttons as they are available in the bottom of the page -->
       <!-- <PostNavigation
