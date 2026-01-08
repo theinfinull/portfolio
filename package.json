@@ -11,7 +11,8 @@
     "astro": "astro",
     "prettier": "prettier --write **/*.{ts,tsx,css,astro} --ignore-path .gitignore",
     "postinstall": "patch-package",
-    "import:obsidian": "node scripts/import-obsidian.mjs"
+    "obsidian:import": "node scripts/import-obsidian.mjs",
+    "obsidian:commit": "node scripts/import-and-commit.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
