@@ -37,7 +37,11 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
 ---
 
 <Layout class="max-w-3xl">
-  <PageHead slot="head" title="Search" description="Search through blog posts" />
+  <PageHead
+    slot="head"
+    title="Search"
+    description="Search through blog posts"
+  />
   <Breadcrumbs
     items={[
       { href: '/blog', label: 'Blog', icon: 'lucide:library-big' },
@@ -47,38 +51,41 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
 
   <div class="flex flex-col gap-y-6">
     <div>
-      <h1 class="text-3xl font-semibold mb-2">Search</h1>
+      <h1 class="mb-2 text-3xl font-semibold">Search</h1>
       <p class="text-muted-foreground text-sm">
-        Search through {allPosts.length} posts, {allProjects.length} projects, and pages
+        Search through {allPosts.length} posts, {allProjects.length} projects, and
+        pages
       </p>
     </div>
 
     <div class="relative">
       <Icon
         name="lucide:search"
-        class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none"
+        class="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
       />
       <input
         type="search"
         id="search-input"
         placeholder="Search posts, projects, and pages..."
-        class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 pl-9 text-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 pl-9 text-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
         autofocus
       />
     </div>
 
     <div id="search-results" class="flex flex-col gap-y-4"></div>
-    <div id="search-empty" class="hidden text-center py-12">
-      <p class="text-muted-foreground">No results found. Try a different search term.</p>
+    <div id="search-empty" class="hidden py-12 text-center">
+      <p class="text-muted-foreground">
+        No results found. Try a different search term.
+      </p>
     </div>
-    <div id="search-initial" class="text-center py-12">
+    <div id="search-initial" class="py-12 text-center">
       <p class="text-muted-foreground">Start typing to search...</p>
     </div>
   </div>
 </Layout>
 
 <script is:inline define:vars={{ allSearchData }}>
-  (function() {
+  ;(function () {
     let isInitialized = false
     let currentInputHandler = null
 
@@ -112,7 +119,10 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
       function highlightMatch(text, query) {
         if (!query.trim()) return escapeHtml(text)
         const regex = new RegExp(`(${escapeRegex(query)})`, 'gi')
-        return escapeHtml(text).replace(regex, '<mark class="bg-primary/20 dark:bg-primary/30 rounded px-0.5">$1</mark>')
+        return escapeHtml(text).replace(
+          regex,
+          '<mark style="background-color: var(--highlight);" class="rounded px-0.5 font-medium">$1</mark>'
+        )
       }
 
       function escapeRegex(str) {
@@ -120,11 +130,15 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
       }
 
       function getTypeLabel(type) {
-        switch(type) {
-          case 'post': return 'Post'
-          case 'project': return 'Project'
-          case 'page': return 'Page'
-          default: return ''
+        switch (type) {
+          case 'post':
+            return 'Post'
+          case 'project':
+            return 'Project'
+          case 'page':
+            return 'Page'
+          default:
+            return ''
         }
       }
 
@@ -142,8 +156,12 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
 
         const matchingItems = allSearchData.filter((item) => {
           const titleMatch = item.title.toLowerCase().includes(normalizedQuery)
-          const descriptionMatch = item.description.toLowerCase().includes(normalizedQuery)
-          const tagsMatch = item.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery))
+          const descriptionMatch = item.description
+            .toLowerCase()
+            .includes(normalizedQuery)
+          const tagsMatch = item.tags.some((tag) =>
+            tag.toLowerCase().includes(normalizedQuery)
+          )
           return titleMatch || descriptionMatch || tagsMatch
         })
 
@@ -224,11 +242,9 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
     }
 
     // Re-initialize on Astro view transitions (if enabled)
-    document.addEventListener('astro:page-load', function() {
+    document.addEventListener('astro:page-load', function () {
       isInitialized = false
       initSearch()
     })
   })()
 </script>
-
-
