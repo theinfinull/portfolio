@@ -1,4 +1,4 @@
-import { SITE, ME } from '@/consts'
+import { ME } from '@/consts'
 
 /**
  * Gets searchable content for static pages based on actual page content
