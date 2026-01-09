@@ -55,6 +55,13 @@ export async function getFeaturedProjects(
   return featuredProjects.slice(0, count)
 }
 
+export async function getProjectById(
+  projectId: string,
+): Promise<CollectionEntry<'projects'> | null> {
+  const projects = await getAllProjects()
+  return projects.find((project) => project.id === projectId) || null
+}
+
 export async function getAllExperiences(): Promise<CollectionEntry<'experience'>[]> {
   return await getCollection('experience')
 }

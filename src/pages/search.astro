@@ -26,7 +26,7 @@ const projectsData = allProjects.map((project) => ({
   title: project.data.name,
   description: project.data.description,
   tags: project.data.tags || [],
-  slug: `/projects#${project.id}`,
+  slug: `/projects/${project.id}`,
   type: 'project',
 }))
 
@@ -42,12 +42,7 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
     title="Search"
     description="Search through blog posts"
   />
-  <Breadcrumbs
-    items={[
-      { href: '/blog', label: 'Blog', icon: 'lucide:library-big' },
-      { label: 'Search', icon: 'lucide:search' },
-    ]}
-  />
+  <Breadcrumbs items={[{ label: 'Search', icon: 'lucide:search' }]} />
 
   <div class="flex flex-col gap-y-6">
     <div>
@@ -67,7 +62,7 @@ const allSearchData = [...postsData, ...projectsData, ...pageData]
         type="search"
         id="search-input"
         placeholder="Search posts, projects, and pages..."
-        class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 pl-9 text-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
+        class="border-input bg-background placeholder:text-muted-foreground focus-visible:border-accent flex h-9 w-full rounded-md border px-3 py-1 pl-9 text-sm transition-colors focus-visible:outline-none"
         autofocus
       />
     </div>
