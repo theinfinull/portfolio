@@ -1,0 +1,108 @@
+---
+/**
+ * GitHub Discussions via giscus; theme CSS matches site light/dark (data-theme).
+ *
+ * giscus.app fetches the theme CSS over the public internet:
+ * - Prod: served from the site's own `public/` folder at `<site>/giscus-{light,dark}.css`
+ *   (requires `site` in astro.config).
+ * - Dev:  localhost isn't reachable from giscus.app, so fall back to a public CDN
+ *   (e.g. jsDelivr mirror of this repo) via `PUBLIC_GISCUS_THEME_CDN` in .env.
+ *   Toggled by `DEVELOPMENT_MODE=true` in .env.
+ */
+interface Props {
+  term: string
+}
+
+const { term } = Astro.props
+
+const isDev = import.meta.env.DEVELOPMENT_MODE === 'true'
+
+const prodBase = Astro.site?.toString().replace(/\/$/, '')
+const devBase = (
+  import.meta.env.PUBLIC_GISCUS_THEME_CDN as string | undefined
+)?.replace(/\/$/, '')
+
+const cssBase = isDev ? devBase : prodBase
+
+if (!cssBase) {
+  throw new Error(
+    isDev
+      ? 'PUBLIC_GISCUS_THEME_CDN is not set in .env — needed as a dev fallback for giscus theme CSS.'
+      : '`site` is not set in astro.config — giscus needs it to fetch theme CSS from the deployed site.'
+  )
+}
+
+const themeLight = `${cssBase}/giscus-light.css`
+const themeDark = `${cssBase}/giscus-dark.css`
+---
+
+<div class="col-start-2 mt-14 border-border border-t pt-10">
+  <h2 class="text-foreground mb-6 text-xl font-semibold tracking-tight">
+    Comments
+  </h2>
+  <div class="giscus" />
+</div>
+
+<script
+  is:inline
+  define:vars={{
+    themeLight,
+    themeDark,
+    term,
+    repo: 'theinfinull/portfolio-giscus',
+    repoId: 'R_kgDOSGHx2g',
+    category: 'General',
+    categoryId: 'DIC_kwDOSGHx2s4C7JEX',
+  }}
+>
+  const GISCUS_ORIGIN = 'https://giscus.app'
+
+  function giscusThemeUrl() {
+    return document.documentElement.getAttribute('data-theme') === 'dark'
+      ? themeDark
+      : themeLight
+  }
+
+  function observeTheme() {
+    if (window.__giscusThemeObserver) return
+    const obs = new MutationObserver(() => {
+      const iframe = document.querySelector('iframe.giscus-frame')
+      iframe?.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme: giscusThemeUrl() } } },
+        GISCUS_ORIGIN
+      )
+    })
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+    window.__giscusThemeObserver = obs
+  }
+
+  function injectGiscus() {
+    if (!document.querySelector('.giscus')) return
+    if (document.querySelector('script[src*="giscus.app/client.js"]')) return
+
+    const s = document.createElement('script')
+    s.src = `${GISCUS_ORIGIN}/client.js`
+    s.async = true
+    s.crossOrigin = 'anonymous'
+    s.setAttribute('data-repo', repo)
+    s.setAttribute('data-repo-id', repoId)
+    s.setAttribute('data-category', category)
+    s.setAttribute('data-category-id', categoryId)
+    s.setAttribute('data-mapping', 'specific')
+    s.setAttribute('data-term', term)
+    s.setAttribute('data-strict', '0')
+    s.setAttribute('data-reactions-enabled', '1')
+    s.setAttribute('data-emit-metadata', '0')
+    s.setAttribute('data-input-position', 'top')
+    s.setAttribute('data-theme', giscusThemeUrl())
+    s.setAttribute('data-lang', 'en')
+    s.setAttribute('data-loading', 'lazy')
+    document.body.appendChild(s)
+  }
+
+  injectGiscus()
+  observeTheme()
+</script>
